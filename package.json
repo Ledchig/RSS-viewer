@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
-    "build": "webpack --mode=production --node-env=production --output public",
+    "build": "[my-framework] build --output public",
     "build:dev": "webpack --mode=development",
     "build:prod": "webpack --mode=production --node-env=production",
     "watch": "webpack --watch",
