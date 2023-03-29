@@ -1,0 +1,31 @@
+{
+  "name": "my-webpack-project",
+  "version": "1.0.0",
+  "description": "My webpack project",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "build": "webpack --mode=production --node-env=production",
+    "build:dev": "webpack --mode=development",
+    "build:prod": "webpack --mode=production --node-env=production",
+    "watch": "webpack --watch",
+    "serve": "webpack serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ledchig/frontend-project-11.git"
+  },
+  "author": "Savonin Nikolay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ledchig/frontend-project-11/issues"
+  },
+  "homepage": "https://github.com/Ledchig/frontend-project-11#readme",
+  "devDependencies": {
+    "@webpack-cli/generators": "^3.0.1",
+    "bootstrap": "^5.2.3",
+    "eslint": "^8.36.0",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1"
+  }
+}
