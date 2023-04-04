@@ -28,5 +28,9 @@
     "html-webpack-plugin": "^5.5.0",
     "webpack": "^5.76.3",
     "webpack-cli": "^5.0.1"
+  },
+  "dependencies": {
+    "on-change": "^4.0.2",
+    "yup": "^1.0.2"
   }
 }
