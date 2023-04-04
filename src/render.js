@@ -1,22 +1,13 @@
-const renderError = ({ feedbackString }, value) => {
+const renderError = ({ feedbackString }, state, value, i18nInstance) => {
   if (value === '') {
     return;
   }
   feedbackString.classList.remove('text-success');
   feedbackString.classList.add('text-danger');
-  switch (value) {
-    case 'invalidUrl':
-      feedbackString.textContent = 'Ссылка должна быть валидным URL';
-      break;
-    case 'dublUrl':
-      feedbackString.textContent = 'RSS уже существует';
-      break;
-    default:
-      throw new Error('Unknown error', value);
-  }
+  feedbackString.textContent = i18nInstance.t(`errors.${state.error}`);
 };
 
-const handleValidationState = ({ urlInput, feedbackString }, value) => {
+const handleValidationState = ({ urlInput }, value) => {
   if (value === 'added') {
     urlInput.classList.remove('is-invalid');
     
@@ -25,24 +16,24 @@ const handleValidationState = ({ urlInput, feedbackString }, value) => {
   }
 };
 
-const renderLinks = ({ feedbackString, form, urlInput }) => {
-  feedbackString.textContent = 'RSS успешно загружен';
+const renderLinks = ({ feedbackString, form, urlInput }, state, i18nInstance) => {
+  feedbackString.textContent = i18nInstance.t(`${state.formStatus}`);
   feedbackString.classList.remove('text-danger');
   feedbackString.classList.add('text-success');
   form.reset();
   urlInput.focus();
 };
 
-export default (elements) => (path, value) => {
+export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'formStatus':
       handleValidationState(elements, value);
       break;
     case 'error':
-      renderError(elements, value);
+      renderError(elements, state, value, i18nInstance);
       break;
     case 'links':
-      renderLinks(elements);
+      renderLinks(elements, state, i18nInstance);
       break;
     default:
       throw new Error('Unknown state', path);

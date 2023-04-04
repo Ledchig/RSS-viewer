@@ -26,6 +26,7 @@
     "bootstrap": "^5.2.3",
     "eslint": "^8.36.0",
     "html-webpack-plugin": "^5.5.0",
+    "i18next": "^22.4.14",
     "webpack": "^5.76.3",
     "webpack-cli": "^5.0.1"
   },
