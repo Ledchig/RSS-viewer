@@ -17,7 +17,7 @@ export default () => {
       error: '',
       links: [],
     };
-  console.log(i18nInstance.t('addedUrl'));
+  console.log((i18nInstance.t('addedUrl')));
     const elements = {
       form: document.querySelector('form'),
       urlInput: document.getElementById('url-input'),
@@ -45,9 +45,9 @@ export default () => {
       const input = formData.get('url').trim();
       schema.validate(input)
         .then(() => {
+          state.formStatus = 'addedUrl';
           state.links.push(input);
           state.error = '';
-          state.formStatus = 'addedUrl';
         })
         .catch((err) => {
           state.error = err.message;

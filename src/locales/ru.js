@@ -1,5 +1,5 @@
 export default {
-  translations:{
+  translation:{
     errors: {
       dublUrl: 'RSS уже существует',
       invalidUrl: 'Ссылка должна быть валидным URL',

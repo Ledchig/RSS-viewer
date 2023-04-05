@@ -25,6 +25,7 @@ const renderLinks = ({ feedbackString, form, urlInput }, state, i18nInstance) =>
 };
 
 export default (elements, state, i18nInstance) => (path, value) => {
+  console.log(i18nInstance);
   switch (path) {
     case 'formStatus':
       handleValidationState(elements, value);
