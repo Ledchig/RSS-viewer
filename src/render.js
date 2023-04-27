@@ -95,8 +95,6 @@ const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, stat
       feedbackString.classList.remove('text-warning');
       feedbackString.classList.add('text-danger');
       urlInput.classList.add('is-invalid');
-      form.reset();
-      urlInput.focus();
       break;
     default:
       break;

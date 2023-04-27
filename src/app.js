@@ -4,10 +4,10 @@ import render from './render.js'
 import resources from './locales/index.js';
 import i18next from 'i18next';
 import axios from 'axios';
-import { uniqueId } from 'lodash';
+import { uniqueId, differenceWith, isEqual } from 'lodash';
 import parse from './parser.js';
 
-const getData = (url) => {
+const getAxiosResponse = (url) => {
   const proxyUrl = new URL('/get', 'https://allorigins.hexlet.app');
   proxyUrl.searchParams.append('disableCache', 'true');
   proxyUrl.searchParams.append('url', url);
@@ -24,6 +24,27 @@ const handleError = (error) => {
   return error.message ?? 'unknown error';
 };
 
+const updatePosts = (state) => {
+  const promises = state.feeds.map((feed) => getAxiosResponse(feed.link)
+    .then((response) => {
+      const { posts } = parse(response.data.contents);
+      const postsOfFeed = state.posts.filter(({ feedId }) => feedId === feed.id);
+      const viewedPosts = postsOfFeed.map((post) => {
+        const { title, link, description } = post;
+        return { title, link, description };
+      });
+      const newPosts = differenceWith(posts, viewedPosts, isEqual);
+      const newPostsWithIds = newPosts.map((post) => {
+        post.id = uniqueId();
+        post.feedId = feed.id;
+        return post;
+      });
+      state.posts.unshift(...newPostsWithIds);
+    }));
+  return Promise.all(promises)
+    .then(() => setTimeout(updatePosts, 5000, state));
+};
+  
 export default () => {
   const i18nInstance = i18next.createInstance();
   i18nInstance.init({
@@ -57,14 +78,11 @@ export default () => {
       },
     });
     
-    const makeSchema = (addedLinks) =>
-      yup.string()
-      .url()
-      .notOneOf(addedLinks);
+    const makeSchema = (addedLinks) => yup.string().url().notOneOf(addedLinks);
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const addedLinks = state.feeds.map((feed) => feed.url);
+      const addedLinks = state.feeds.map((feed) => feed.link);
       const schema = makeSchema(addedLinks);
       const formData = new FormData(e.target);
       const input = formData.get('url').trim();
@@ -72,10 +90,11 @@ export default () => {
         .then(() => {
           state.error = '';
           state.formStatus = 'sending';
-          return getData(input);
+          return getAxiosResponse(input);
         })
         .then((response) => {
-          const { feed, posts } = parse(response.data.contents, input);
+          const { feed, posts } = parse(response.data.contents);
+          feed.link = input;
           feed.id = uniqueId();
           posts.forEach((post) => {
             post.id = uniqueId();
@@ -90,5 +109,6 @@ export default () => {
           state.formStatus = 'invalid';
         });
     });
+    updatePosts(state);
   });
 };

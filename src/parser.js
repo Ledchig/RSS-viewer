@@ -1,4 +1,4 @@
-export default (rss, url) => {
+export default (rss) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(rss, 'text/xml');
   const parseError = data.querySelector("parsererror");
@@ -8,23 +8,15 @@ export default (rss, url) => {
     throw error;
   }
 
-  const feedTitle = data.querySelector('title').textContent;
-  const feedDescripton = data.querySelector('description').textContent;
   const feed = {
-    url: url,
-    title: feedTitle,
-    description: feedDescripton,
+    title: data.querySelector('title').textContent,
+    description: data.querySelector('description').textContentcripton,
   };
   const posts = [...data.querySelectorAll('item')].map((el) => {
-    const link = el.querySelector('link').textContent;
-    const title = el.querySelector('title').textContent;
-    const description = el.querySelector('description').textContent;
-    const date = el.querySelector('pubDate').textContent;
     return {
-      link,
-      title,
-      description,
-      date,
+      link: el.querySelector('link').textContent,
+      title: el.querySelector('title').textContent,
+      description: el.querySelector('description').textContent,
     };
   });
 return { feed, posts };
