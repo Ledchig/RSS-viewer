@@ -42,7 +42,7 @@ const updatePosts = (state) => {
       state.posts.unshift(...newPostsWithIds);
     }));
   return Promise.all(promises)
-    .then(() => setTimeout(updatePosts, 5000, state));
+    .finally(setTimeout(() => updatePosts(state), 5000));
 };
   
 export default () => {
@@ -54,6 +54,10 @@ export default () => {
   })
   .then(() => {
     const initialState = {
+      ui: {
+        readedPosts: new Set(),
+        modalWindow: null,
+      },
       formStatus: 'filling',
       error: '',
       feeds: [],
@@ -66,6 +70,9 @@ export default () => {
       feedbackString: document.querySelector('.feedback'),
       posts: document.querySelector('.posts'),
       feeds: document.querySelector('.feeds'),
+      modalTitle: document.querySelector('.modal-title'),
+      modalDescription: document.querySelector('.modal-body'),
+      modalLink: document.querySelector('.full-article'),
     };
     const state = onChange(initialState, render(elements, initialState, i18nInstance));
   
@@ -108,6 +115,12 @@ export default () => {
           state.error = handleError(err);
           state.formStatus = 'invalid';
         });
+    });
+    elements.posts.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetPostId = e.target.dataset.id;
+      state.ui.readedPosts.add(targetPostId);
+      state.ui.modalWindow = targetPostId;
     });
     updatePosts(state);
   });

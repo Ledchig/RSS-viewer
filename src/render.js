@@ -22,11 +22,15 @@ const createPosts = (state, i18nInstance) => {
     const postLink = document.createElement('a');
     const btn = document.createElement('button');
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    postLink.classList.add('fw-bold');
     postLink.setAttribute('href', post.link);
     postLink.setAttribute('data-id', post.id);
     postLink.setAttribute('target', '_blank');
     postLink.setAttribute('rel', 'noopener noreferrer');
+    if (state.ui.readedPosts.has(post.id)) {
+      postLink.classList.add('fw-normal');
+    } else {
+      postLink.classList.add('fw-bold');
+    }
     postLink.textContent = post.title;
     btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
     btn.setAttribute('type', 'button');
@@ -73,7 +77,7 @@ const renderError = ({ feedbackString }, state, value, i18nInstance) => {
   feedbackString.textContent = i18nInstance.t(`errors.${state.error}`);
 };
 
-const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, state, value, i18nInstance) => {
+const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, value, i18nInstance) => {
   switch (value) {
     case 'sending':
       submitButton.disable = true;
@@ -113,10 +117,25 @@ const renderPosts = ({ posts }, state, i18nInstance) => {
   posts.append(postsList);
 };
 
+const renderModalWindow = (value, state, { modalTitle, modalDescription, modalLink }) => {
+  const post = state.posts.find((post) => post.id === value);
+  modalTitle.textContent = post.title;
+  modalDescription.textContent = post.description;
+  modalLink.setAttribute('href', post.link);
+};
+
+const renderReadedPosts = (readedPosts) => {
+  readedPosts.forEach((postId) => {
+    const post = document.querySelector(`a[data-id="${postId}"]`);
+    post.classList.remove('fw-bold');
+    post.classList.add('fw-normal');
+  });
+};
+
 export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'formStatus':
-      renderFormStatus(elements, state, value, i18nInstance);
+      renderFormStatus(elements, value, i18nInstance);
       break;
     case 'error':
       renderError(elements, state, value, i18nInstance);
@@ -126,6 +145,12 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
     case 'posts':
       renderPosts(elements, state, i18nInstance);
+      break;
+    case 'ui.modalWindow':
+      renderModalWindow(value, state, elements);
+      break;
+    case 'ui.readedPosts':
+      renderReadedPosts(value);
       break;
     default:
       throw new Error('Unknown state', path);
