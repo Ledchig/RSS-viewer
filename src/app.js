@@ -122,7 +122,6 @@ export default () => {
         });
     });
     elements.posts.addEventListener('click', (e) => {
-      e.preventDefault();
       const targetPostId = e.target.dataset.id;
       state.ui.readedPosts.add(targetPostId);
       state.ui.modalWindow = targetPostId;
