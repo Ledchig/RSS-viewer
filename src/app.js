@@ -39,7 +39,11 @@ const updatePosts = (state) => {
         post.feedId = feed.id;
         return post;
       });
-      state.posts.unshift(...newPostsWithIds);
+      console.log(newPostsWithIds[0].pubDate);
+      console.log(state.posts[0].pubDate);
+      if (newPostsWithIds[0].pubDate !== state.posts[0].pubDate) {
+        state.posts.unshift(...newPostsWithIds);
+      }
     }));
   return Promise.all(promises)
     .finally(setTimeout(() => updatePosts(state), 5000));

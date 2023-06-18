@@ -80,7 +80,7 @@ const renderError = ({ feedbackString }, state, value, i18nInstance) => {
 const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, value, i18nInstance) => {
   switch (value) {
     case 'sending':
-      submitButton.disable = true;
+      submitButton.disabled = true;
       urlInput.classList.remove('is-invalid');
       feedbackString.classList.remove('text-danger');
       feedbackString.classList.remove('text-success');
@@ -88,7 +88,7 @@ const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, valu
       feedbackString.textContent = i18nInstance.t('sending');
       break;
     case 'addedUrl':
-      submitButton.disable = false;
+      submitButton.disabled = false;
       feedbackString.classList.remove('text-warning');
       feedbackString.classList.add('text-success');
       feedbackString.textContent = i18nInstance.t('addedUrl');

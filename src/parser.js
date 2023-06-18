@@ -18,6 +18,7 @@ export default (rss) => {
       link: el.querySelector('link').textContent,
       title: el.querySelector('title').textContent,
       description: el.querySelector('description').textContent,
+      pubDate: el.querySelector('pubDate').textContent,
     };
   });
 return { feed, posts };
