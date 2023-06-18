@@ -11,7 +11,7 @@ export default (rss) => {
 
   const feed = {
     title: data.querySelector('title').textContent,
-    description: data.querySelector('description').textContentcripton,
+    description: data.querySelector('description').textContent,
   };
   const posts = [...data.querySelectorAll('item')].map((el) => {
     return {

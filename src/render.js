@@ -1,6 +1,7 @@
 const createFeeds = (state) => {
   const feeds = [];
   state.feeds.forEach((feed) => {
+    console.log(feed);
     const li = document.createElement('li');
     const feedName = document.createElement('h3');
     const feedDescription = document.createElement('p');
@@ -27,7 +28,7 @@ const createPosts = (state, i18nInstance) => {
     postLink.setAttribute('target', '_blank');
     postLink.setAttribute('rel', 'noopener noreferrer');
     if (state.ui.readedPosts.has(post.id)) {
-      postLink.classList.add('fw-normal');
+      postLink.classList.add('fw-normal', 'link-secondary');
     } else {
       postLink.classList.add('fw-bold');
     }
@@ -35,11 +36,10 @@ const createPosts = (state, i18nInstance) => {
     btn.classList.add('btn', 'btn-outline-primary', 'btn-sm');
     btn.setAttribute('type', 'button');
     btn.setAttribute('data-id', post.id);
-    btn.setAttribute('data-bs-toogle', 'modal');
+    btn.setAttribute('data-bs-toggle', 'modal');
     btn.setAttribute('data-bs-target', '#modal');
     btn.textContent = i18nInstance.t('items.postButton');
-    li.append(postLink);
-    li.append(btn);
+    li.append(postLink, btn);
     posts.push(li);
   });
   return posts;
@@ -53,7 +53,7 @@ const createList = (type, state, i18nInstance) => {
   cardBody.classList.add('card-body');
   const columnName = document.createElement('h2');
   columnName.classList.add('card-title', 'h4');
-  columnName.textContent = i18nInstance.t(`item.${type}`);
+  columnName.textContent = i18nInstance.t(`items.${type}`);
   list.classList.add('list-group', 'border-0', 'rounded-0');
   switch (type) {
     case 'feeds':
@@ -65,8 +65,8 @@ const createList = (type, state, i18nInstance) => {
     default:
       break;
   };
-  cardBody.append(list);
-  cardBorderZero.append(cardBody);
+  cardBody.append(columnName);
+  cardBorderZero.append(cardBody, list);
   return cardBorderZero;
 };
 
@@ -128,7 +128,7 @@ const renderReadedPosts = (readedPosts) => {
   readedPosts.forEach((postId) => {
     const post = document.querySelector(`a[data-id="${postId}"]`);
     post.classList.remove('fw-bold');
-    post.classList.add('fw-normal');
+    post.classList.add('fw-normal', 'link-secondary');
   });
 };
 
