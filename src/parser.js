@@ -1,7 +1,6 @@
 export default (rss) => {
-  console.log(rss);
   const parser = new DOMParser();
-  const data = parser.parseFromString(rss, 'application/xml');
+  const data = parser.parseFromString(rss, 'text/xml');
   const parseError = data.querySelector("parsererror");
   if (parseError) {
     const error = new Error(parseError.textContent);
@@ -18,7 +17,6 @@ export default (rss) => {
       link: el.querySelector('link').textContent,
       title: el.querySelector('title').textContent,
       description: el.querySelector('description').textContent,
-      pubDate: el.querySelector('pubDate').textContent,
     };
   });
 return { feed, posts };

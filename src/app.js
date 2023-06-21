@@ -11,7 +11,7 @@ const getAxiosResponse = (url) => {
   const proxyUrl = new URL('/get', 'https://allorigins.hexlet.app');
   proxyUrl.searchParams.append('disableCache', 'true');
   proxyUrl.searchParams.append('url', url);
-  return axios.get(proxyUrl);
+  return axios.get(proxyUrl.toString());
 };
 
 const handleError = (error) => {
@@ -29,21 +29,14 @@ const updatePosts = (state) => {
     .then((response) => {
       const { posts } = parse(response.data.contents);
       const postsOfFeed = state.posts.filter(({ feedId }) => feedId === feed.id);
-      const viewedPosts = postsOfFeed.map((post) => {
-        const { title, link, description } = post;
-        return { title, link, description };
-      });
-      const newPosts = differenceWith(posts, viewedPosts, isEqual);
+      const linksOfPostsFromState = postsOfFeed.map((post) => post.link);
+      const newPosts = posts.filter(({ link }) => !linksOfPostsFromState.includes(link));
       const newPostsWithIds = newPosts.map((post) => {
         post.id = uniqueId();
         post.feedId = feed.id;
         return post;
       });
-      console.log(newPostsWithIds[0].pubDate);
-      console.log(state.posts[0].pubDate);
-      if (newPostsWithIds[0].pubDate !== state.posts[0].pubDate) {
-        state.posts.unshift(...newPostsWithIds);
-      }
+      state.posts.unshift(...newPostsWithIds);
     }));
   return Promise.all(promises)
     .finally(setTimeout(() => updatePosts(state), 5000));
@@ -61,6 +54,7 @@ export default () => {
       ui: {
         readedPosts: new Set(),
         modalWindow: null,
+        submitBlock: false,
       },
       formStatus: 'filling',
       error: '',
@@ -93,11 +87,12 @@ export default () => {
 
     elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
+      state.ui.submitBlock = true;
       const addedLinks = state.feeds.map((feed) => feed.link);
       const schema = makeSchema(addedLinks);
       const formData = new FormData(e.target);
       const input = formData.get('url').trim();
-      schema.validate(input)
+      schema.validate(input.trim())
         .then(() => {
           state.error = '';
           state.formStatus = 'sending';
@@ -105,7 +100,6 @@ export default () => {
         })
         .then((response) => {
           const { feed, posts } = parse(response.data.contents);
-          console.log(feed);
           feed.link = input;
           feed.id = uniqueId();
           posts.forEach((post) => {
@@ -115,17 +109,19 @@ export default () => {
           state.feeds.push(feed);
           state.posts.push(...posts);
           state.formStatus = 'addedUrl';
+          state.ui.submitBlock = false;
         })
         .catch((err) => {
           state.error = handleError(err);
           state.formStatus = 'invalid';
+          state.ui.submitBlock = false;
         });
     });
     elements.posts.addEventListener('click', (e) => {
       const targetPostId = e.target.dataset.id;
       state.ui.readedPosts.add(targetPostId);
       state.ui.modalWindow = targetPostId;
-    });
+    });    
     updatePosts(state);
   });
 };

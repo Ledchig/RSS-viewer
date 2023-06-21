@@ -1,7 +1,6 @@
 const createFeeds = (state) => {
   const feeds = [];
   state.feeds.forEach((feed) => {
-    console.log(feed);
     const li = document.createElement('li');
     const feedName = document.createElement('h3');
     const feedDescription = document.createElement('p');
@@ -80,7 +79,6 @@ const renderError = ({ feedbackString }, state, value, i18nInstance) => {
 const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, value, i18nInstance) => {
   switch (value) {
     case 'sending':
-      submitButton.disabled = true;
       urlInput.classList.remove('is-invalid');
       feedbackString.classList.remove('text-danger');
       feedbackString.classList.remove('text-success');
@@ -88,7 +86,6 @@ const renderFormStatus = ({ form, feedbackString, urlInput, submitButton }, valu
       feedbackString.textContent = i18nInstance.t('sending');
       break;
     case 'addedUrl':
-      submitButton.disabled = false;
       feedbackString.classList.remove('text-warning');
       feedbackString.classList.add('text-success');
       feedbackString.textContent = i18nInstance.t('addedUrl');
@@ -151,6 +148,9 @@ export default (elements, state, i18nInstance) => (path, value) => {
       break;
     case 'ui.readedPosts':
       renderReadedPosts(value);
+      break;
+    case 'ui.submitBlock':
+      elements.submitButton.disabled = state.ui.submitBlock;
       break;
     default:
       throw new Error('Unknown state', path);
