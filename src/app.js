@@ -4,7 +4,7 @@ import render from './render.js'
 import resources from './locales/index.js';
 import i18next from 'i18next';
 import axios from 'axios';
-import { uniqueId, differenceWith, isEqual } from 'lodash';
+import { uniqueId } from 'lodash';
 import parse from './parser.js';
 
 const getAxiosResponse = (url) => {
@@ -25,7 +25,8 @@ const handleError = (error) => {
 };
 
 const updatePosts = (state) => {
-  const promises = state.feeds.map((feed) => getAxiosResponse(feed.link)
+  const promises = state.feeds.map((feed) => {
+    getAxiosResponse(feed.link)
     .then((response) => {
       const { posts } = parse(response.data.contents);
       const postsOfFeed = state.posts.filter(({ feedId }) => feedId === feed.id);
@@ -37,8 +38,10 @@ const updatePosts = (state) => {
         return post;
       });
       state.posts.unshift(...newPostsWithIds);
-    }));
-  return Promise.all(promises)
+    })
+    .catch((err) => console.log(err.message));
+  });
+  Promise.all(promises)
     .finally(setTimeout(() => updatePosts(state), 5000));
 };
   
