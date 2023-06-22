@@ -1,4 +1,4 @@
-import "bootstrap";
-import app from "./app.js";
+import 'bootstrap';
+import app from './app.js';
 
 app();

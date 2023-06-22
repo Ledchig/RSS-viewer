@@ -25,6 +25,7 @@
     "@webpack-cli/generators": "^3.0.1",
     "bootstrap": "^5.2.3",
     "eslint": "^8.36.0",
+    "eslint-config-airbnb": "^19.0.4",
     "html-webpack-plugin": "^5.5.0",
     "i18next": "^22.4.14",
     "webpack": "^5.76.3",
