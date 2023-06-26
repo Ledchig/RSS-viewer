@@ -86,13 +86,14 @@ const renderError = ({ feedbackString }, state, value, i18nInstance) => {
 
 const renderFormStatus = (
   {
-    form, feedbackString, urlInput,
+    submitButton, form, feedbackString, urlInput,
   },
   value,
   i18nInstance,
 ) => {
   switch (value) {
     case 'sending':
+      submitButton.setAttribute('disabled', true);
       urlInput.classList.remove('is-invalid');
       feedbackString.classList.remove('text-danger');
       feedbackString.classList.remove('text-success');
@@ -101,6 +102,7 @@ const renderFormStatus = (
       feedbackString.textContent = i18nInstance.t('sending');
       break;
     case 'addedUrl':
+      submitButton.removeAttribute('disabled');
       feedbackString.classList.remove('text-warning');
       feedbackString.classList.add('text-success');
       // eslint-disable-next-line no-param-reassign
@@ -109,6 +111,7 @@ const renderFormStatus = (
       urlInput.focus();
       break;
     case 'invalid':
+      submitButton.removeAttribute('disabled');
       feedbackString.classList.remove('text-warning');
       feedbackString.classList.add('text-danger');
       urlInput.classList.add('is-invalid');
@@ -119,16 +122,13 @@ const renderFormStatus = (
 };
 
 const renderFeeds = ({ feeds }, state, i18nInstance) => {
-  // eslint-disable-next-line no-param-reassign
-  feeds.innerHTML = '';
-  feeds.append(createList('feeds', state, i18nInstance));
+  const feedsList = createList('feeds', state, i18nInstance);
+  feeds.replaceChildren(feedsList);
 };
 
 const renderPosts = ({ posts }, state, i18nInstance) => {
-  // eslint-disable-next-line no-param-reassign
-  posts.innerHTML = '';
   const postsList = createList('posts', state, i18nInstance);
-  posts.append(postsList);
+  posts.replaceChildren(postsList);
 };
 
 const renderModalWindow = (
@@ -172,14 +172,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
     case 'ui.readedPosts':
       renderReadedPosts(value);
       break;
-    case 'ui.submitBlock':
-      if (state.ui.submitBlock) {
-        elements.submitButton.setAttribute('disabled', true);
-      } else {
-        elements.submitButton.removeAttribute('disabled');
-      }
-      break;
     default:
-      throw new Error('Unknown state', path);
+      throw new Error(`Unknown ${path}`);
   }
 };

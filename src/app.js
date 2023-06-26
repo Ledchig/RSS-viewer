@@ -25,6 +25,7 @@ const handleError = (error) => {
 };
 
 const updatePosts = (state) => {
+  console.log('updatePosts()');
   const promises = state.feeds.map((feed) => getAxiosResponse(feed.link)
     .then((response) => {
       const { posts } = parse(response.data.contents);
@@ -41,7 +42,8 @@ const updatePosts = (state) => {
       state.posts.unshift(...newPostsWithIds);
     })
     .catch((err) => console.log(err.message)));
-  Promise.all(promises).finally(setTimeout(() => updatePosts(state), 5000));
+  const msForTimeout = 5000;
+  Promise.all(promises).finally(setTimeout(() => updatePosts(state), msForTimeout));
 };
 
 export default () => {
@@ -57,7 +59,6 @@ export default () => {
         ui: {
           readedPosts: new Set(),
           modalWindow: null,
-          submitBlock: false,
         },
         formStatus: 'filling',
         error: '',
@@ -93,8 +94,9 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        state.ui.submitBlock = true;
-        console.log(`state = ${state.ui.submitBlock}`);
+        console.log('event');
+
+        state.formStatus = 'sending';
         const addedLinks = state.feeds.map((feed) => feed.link);
         const schema = makeSchema(addedLinks);
         const formData = new FormData(e.target);
@@ -103,7 +105,6 @@ export default () => {
           .validate(input.trim())
           .then(() => {
             state.error = '';
-            state.formStatus = 'sending';
             return getAxiosResponse(input);
           })
           .then((response) => {
@@ -116,12 +117,10 @@ export default () => {
             state.feeds.push(feed);
             state.posts.push(...postsWithIds);
             state.formStatus = 'addedUrl';
-            state.ui.submitBlock = false;
           })
           .catch((err) => {
             state.error = handleError(err);
             state.formStatus = 'invalid';
-            state.ui.submitBlock = false;
           });
       });
       elements.posts.addEventListener('click', (e) => {
