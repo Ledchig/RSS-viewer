@@ -25,7 +25,6 @@ const handleError = (error) => {
 };
 
 const updatePosts = (state) => {
-  console.log('updatePosts()');
   const promises = state.feeds.map((feed) => getAxiosResponse(feed.link)
     .then((response) => {
       const { posts } = parse(response.data.contents);
@@ -94,8 +93,6 @@ export default () => {
 
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('event');
-
         state.formStatus = 'sending';
         const addedLinks = state.feeds.map((feed) => feed.link);
         const schema = makeSchema(addedLinks);
